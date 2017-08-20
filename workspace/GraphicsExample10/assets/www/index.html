@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Contact Example</title>
+
+	<link rel="stylesheet" href="styles.css" /> 
+
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+	var canvas, context, frameCount = 0, spriteCell = 0;
+	var NUMFRAMESPERSPRITE = 10; // how many frame between changing the sprite cell
+	var backgroundImage, spriteImage;
+	var spriteCells = [
+      { left: 0,   top: 0, width: 50, height: 50 },
+      { left: 50,  top: 0, width: 50, height: 50 },
+      { left: 100, top: 0, width: 50, height: 50 },
+      { left: 150, top: 0, width: 50, height: 50 }
+     ];
+	
+	// Wait for PhoneGap to load
+    document.addEventListener("deviceready", onDeviceReady, false);
+	
+	// shim layer with setTimeout fallback
+	// sets the correct animation frame function call
+	window.requestAnimFrame = (function(){
+		return  window.requestAnimationFrame       ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame    ||
+			  function( callback ){
+				window.setTimeout(callback, 1000 / 60);
+			  };
+	})();
+
+	// draw the frame
+	function drawFrame()
+	{
+		backgroundImage = new Image();
+		backgroundImage.src = "starfield.jpg";
+		backgroundImage.onload = function(e) {
+			
+			spriteImage = new Image();
+			spriteImage.src = "sprite.png";
+			spriteImage.onload = function(e) {
+			
+				// make sure both images load before rendering
+				
+				var ptrn = context.createPattern(backgroundImage,'repeat');
+				context.fillStyle = ptrn;
+
+				// to make the stars appear to move:
+				//      translate the coordinate system so the star pattern originate in a new place
+				//      draw the star field
+				//      then restore the original coordinate system
+				context.save();
+				context.translate(0, frameCount);
+				context.fillRect(0, -frameCount, canvas.width, canvas.height);
+				context.restore();
+
+				// select which piece of the sprite image to draw
+				context.drawImage (spriteImage, spriteCells[spriteCell].left, spriteCells[spriteCell].top, 
+					spriteCells[spriteCell].width, spriteCells[spriteCell].height, 
+					canvas.width/2 - spriteCells[spriteCell].width/2, canvas.height - spriteCells[spriteCell].width*3,
+					spriteCells[spriteCell].width, spriteCells[spriteCell].height);
+
+				frameCount++;
+				
+				// change the sprite cell every so many frames
+				if (frameCount % NUMFRAMESPERSPRITE == 0)
+				{
+					spriteCell++;
+					if (spriteCell == spriteCells.length)
+						spriteCell = 0;
+				}
+				requestAnimFrame (drawFrame);
+			};
+		};
+	}
+
+    // PhoneGap is ready
+    //
+    function onDeviceReady()
+	{
+		// add the canvas to the page
+		var canvasDiv = document.getElementById("canvasDiv");
+		canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" +
+			(window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 20) + "\' />";
+
+		// get the canvas and the context
+		canvas = document.getElementById('surface');
+		context = canvas.getContext('2d');
+		
+		requestAnimFrame (drawFrame);
+    }
+	</script>
+</head>
+<body>
+	<div id="canvasDiv">
+	</div>
+</body>
+</html>

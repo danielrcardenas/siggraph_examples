@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+
+	<script>
+		function createCanvas ()
+		{
+			var canvasDiv = document.getElementById("canvasDiv");
+			canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" + (window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 10) + "\' />";
+			
+			var canvas = document.getElementById('surface');
+			var context = canvas.getContext('2d');
+
+			context.font = '24pt Arial';
+			context.fillStyle = 'blue';
+			context.strokeStyle = 'orange';
+
+			context.fillText("Hello SIGGRAPH", canvas.width/2 - 120,
+			canvas.height/2 + 15);
+			context.strokeText("Hello SIGGRAPH", canvas.width/2 - 120,
+			canvas.height/2 + 15 );
+
+		}
+	</script>
+</head>
+
+<body onload="createCanvas();">
+<div id="canvasDiv">
+</div>
+
+</body>
+</html>

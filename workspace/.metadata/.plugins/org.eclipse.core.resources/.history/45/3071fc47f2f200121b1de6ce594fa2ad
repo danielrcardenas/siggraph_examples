@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+
+	<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+	<script>
+	var angle = 0, angleIncrement = (2*Math.PI) / 200, canvas, context;
+	
+	function drawClockFace (x, y, radius)
+	{
+		context.beginPath();
+		context.arc(x, y, radius, 0, 2*Math.PI);
+		context.stroke();
+
+		context.beginPath();
+		context.arc(x, y, 10, 0, 2*Math.PI);
+		context.fill();
+
+		context.font = '12pt Arial';
+		context.fillStyle = 'blue';
+		context.textAlign = 'center';
+		context.textBaseline = 'middle';
+		for (var i = 0; i < 12; i++)
+		{
+			var angle = (i / 12) * (2*Math.PI) - (Math.PI/2);
+			var textX = x + radius * 1.1 * Math.cos (angle);
+			var textY = y + radius * 1.1 * Math.sin (angle)
+			//context.fillText((i == 0 ? "12" : i) , textX, textY);
+			
+			// Comment out the above fillText() call and remove the comments from the block below
+			context.save();
+			context.translate(textX, textY);
+			context.rotate(angle + Math.PI/2);
+			context.fillText((i == 0 ? "12" : i) , 0, 0);
+			context.restore();
+
+		}
+	}
+	
+	function drawHourHand (hours, x, y, radius)
+	{
+		if (hours > 12)
+			hours -= 12;
+		
+		if (hours == 12)
+			hours = 0;
+			
+		var angle = (hours / 12) * (2*Math.PI) - (Math.PI/2);
+		context.beginPath();
+		context.moveTo (x, y);
+		context.lineTo (x + radius * 0.7 * Math.cos (angle), y + radius * 0.7 * Math.sin (angle));
+		context.stroke();
+
+		context.beginPath();
+		context.arc(x + radius * 0.7 * Math.cos (angle), y + radius * 0.7 * Math.sin (angle), 5, 0, 2*Math.PI);
+		context.fill();
+	}
+
+	function drawMinuteSecondHand (minsec, x, y, radius)
+	{
+		var angle = (minsec / 60) * (2*Math.PI) - (Math.PI/2);
+		context.beginPath();
+		context.moveTo (x, y);
+		context.lineTo (x + radius * Math.cos (angle), y + radius * Math.sin (angle));
+		context.stroke();
+
+		context.beginPath();
+		context.arc(x + radius * Math.cos (angle), y + radius * Math.sin (angle), 5, 0, 2*Math.PI);
+		context.fill();
+	}
+		
+	function drawFrame ()
+	{
+		context.clearRect (0, 0, canvas.width, canvas.height);
+		
+		var centerX = canvas.width / 2;
+		var centerY = canvas.height / 2;
+		
+		var circleRadius;
+		if (centerX < centerY)
+			circleRadius = centerX * 0.8;
+		else
+			circleRadius = centerY * 0.8;
+
+		var date = new Date();
+		drawClockFace (centerX, centerY, circleRadius);
+		drawHourHand (date.getHours(), centerX, centerY, circleRadius);
+		drawMinuteSecondHand (date.getMinutes(), centerX, centerY, circleRadius);
+		drawMinuteSecondHand (date.getSeconds(), centerX, centerY, circleRadius);
+	}
+
+	function createCanvas ()
+	{
+		var canvasDiv = document.getElementById("canvasDiv");
+		canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" +
+			(window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 10) + "\' />";
+	
+		canvas = document.getElementById('surface');
+		context = canvas.getContext('2d');
+		context.fillStyle = "black";
+		
+		self.setInterval (drawFrame, 500); // update every 500 milliseconds
+	}
+	</script>
+</head>
+
+<body onload="createCanvas();">
+	<div id="canvasDiv">
+	</div>
+</body>
+</html>

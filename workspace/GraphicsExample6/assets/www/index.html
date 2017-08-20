@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+
+	<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+	<script>
+		var brushRadius = 5;
+		var canvas, brushCanvas, colorCanvas;
+		var context, brushContext, colorContext;
+		var colors = ["red", "green", "blue", "yellow", "azure",
+			"coral", "crimson", "chartreuse", "khaki", "lavendar"];
+		var filename = ["PIA03149-800x600.jpg", "http://www.jpl.nasa.gov/spaceimages/images/wallpaper/PIA00018-800x600.jpg"];
+		var whichFilename = 0; // default to sun image
+
+		function drawText (textToDraw)
+		{
+			context.save();
+			context.fillStyle = 'rgba(90,240,120,0.5);';
+			context.shadowColor = 'rgba(50, 50, 50, 1.0)';
+			context.shadowOffsetX = 6;
+			context.shadowOffsetY = -6;
+			context.shadowBlur = 9;
+
+			context.font = '64px Arial';
+			var textMetrics = context.measureText(textToDraw);
+			context.fillText(textToDraw, canvas.width/2-textMetrics.width/2, canvas.height/2);
+			context.restore();
+		}
+
+		function changeImage ()
+		{
+			var image = new Image();
+			switch ($("#imgSelector").val())
+			{
+				case 'sun':
+					whichFilename = 0;
+					break;
+				case 'jupiter':
+					whichFilename = 1;
+					break;
+			}
+			image.src = filename[whichFilename];
+			image.onload = function(e) {
+				if ($("#scale").is(":checked"))
+					context.drawImage(image, 0, 0, canvas.width, canvas.height);
+				else
+					context.drawImage(image, 0, 0);
+				drawText ("SIGGRAPH");
+			};
+		}
+		
+		function changeScale ()
+		{
+			context.clearRect (0, 0, canvas.width, canvas.height);
+			var image = new Image();
+			image.src = filename[whichFilename];
+			image.onload = function(e) {
+				if ($("#scale").is(":checked"))
+					context.drawImage(image, 0, 0, canvas.width, canvas.height);
+				else
+					context.drawImage(image, 0, 0);
+				drawText ("SIGGRAPH");
+			};			
+		}
+
+		function windowToCanvas (canvas, x, y)
+		{
+			var boundingBox = canvas.getBoundingClientRect();
+			return { x: (x - boundingBox.left) * (canvas.width  / boundingBox.width),
+				y: (y - boundingBox.top)  * (canvas.height / boundingBox.height)
+			};
+		}
+		
+		function createCanvas ()
+		{
+			var brushCanvasDiv = document.getElementById("brushCanvasDiv");
+			brushCanvasDiv.innerHTML = "<canvas id=\'brushSurface\' width=\'" +
+				(window.innerWidth - 10) + "\' height=\'40\' />";
+			var colorCanvasDiv = document.getElementById("colorCanvasDiv");
+			colorCanvasDiv.innerHTML = "<canvas id=\'colorSurface\' width=\'" +
+				(window.innerWidth - 10) + "\' height=\'40\' />";
+			var canvasDiv = document.getElementById("canvasDiv");
+			canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" +
+				(window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 160) + "\' />";
+
+			brushCanvas = document.getElementById('brushSurface');
+			brushContext = brushCanvas.getContext('2d');
+
+			var imageXbrush = new Image();
+			imageXbrush.src = "xlarge.png";
+			imageXbrush.onload = function(e)
+			{
+				brushContext.drawImage(imageXbrush, 0, 0);
+			};
+			
+			var imageLbrush = new Image();
+			imageLbrush.src = "large.png";
+			imageLbrush.onload = function(e)
+			{
+				brushContext.drawImage(imageLbrush, imageXbrush.width, 0);
+			};
+			
+			var imageMbrush = new Image();
+			imageMbrush.src = "medium.png";
+			imageMbrush.onload = function(e)
+			{
+				brushContext.drawImage(imageMbrush, imageXbrush.width + imageLbrush.width, 0);
+			};
+			
+			var imageSbrush = new Image();
+			imageSbrush.src = "small.png";
+			imageSbrush.onload = function(e)
+			{
+				brushContext.drawImage(imageSbrush, imageXbrush.width + imageLbrush.width + imageMbrush.width, 0);
+			};
+
+			brushCanvas.ontouchstart = function(e)
+			{
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					if (canvasPoint.x < imageXbrush.width)
+						brushRadius = 13;
+					else if (canvasPoint.x < imageXbrush.width + imageLbrush.width)
+						brushRadius = 10;
+					else if (canvasPoint.x < imageXbrush.width + imageLbrush.width + imageMbrush.width)
+						brushRadius = 8;					
+					else if (canvasPoint.x < imageXbrush.width + imageLbrush.width + imageMbrush.width + imageSbrush.width)
+						brushRadius = 5;					
+				}
+			};
+
+			colorCanvas = document.getElementById('colorSurface');
+			colorContext = colorCanvas.getContext('2d');
+			
+			var redImage = new Image();
+			redImage.src = "red.png";
+			redImage.onload = function(e)
+			{
+				colorContext.drawImage(redImage, 0, 0);
+			};
+			
+			var greenImage = new Image();
+			greenImage.src = "green.png";
+			greenImage.onload = function(e)
+			{
+				colorContext.drawImage(greenImage, redImage.width, 0);
+			};
+			
+			var blueImage = new Image();
+			blueImage.src = "blue.png";
+			blueImage.onload = function(e)
+			{
+				colorContext.drawImage(blueImage, redImage.width + greenImage.width, 0);
+			};
+
+			var yellowImage = new Image();
+			yellowImage.src = "yellow.png";
+			yellowImage.onload = function(e)
+			{
+				colorContext.drawImage(yellowImage, redImage.width + greenImage.width + blueImage.width, 0);
+			};
+			
+			var purpleImage = new Image();
+			purpleImage.src = "purple.png";
+			purpleImage.onload = function(e)
+			{
+				colorContext.drawImage(purpleImage, redImage.width + greenImage.width + blueImage.width + yellowImage.width, 0);
+			};
+			
+			var cyanImage = new Image();
+			cyanImage.src = "cyan.png";
+			cyanImage.onload = function(e)
+			{
+				colorContext.drawImage(cyanImage, redImage.width + greenImage.width + blueImage.width + yellowImage.width + purpleImage.width, 0);
+			};
+			
+			colorCanvas.ontouchstart = function(e)
+			{
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					if (canvasPoint.x < redImage.width)
+						context.fillStyle = "red"
+					else if (canvasPoint.x < redImage.width + greenImage.width)
+						context.fillStyle = "green"
+					else if (canvasPoint.x < redImage.width + greenImage.width + blueImage.width)
+						context.fillStyle = "blue"
+					else if (canvasPoint.x < redImage.width + greenImage.width + blueImage.width + yellowImage.width)
+						context.fillStyle = "yellow"
+					else if (canvasPoint.x < redImage.width + greenImage.width + blueImage.width + yellowImage.width + purpleImage.width)
+						context.fillStyle = "purple"
+					else if (canvasPoint.x < redImage.width + greenImage.width + blueImage.width + yellowImage.width + purpleImage.width + cyanImage.width)
+						context.fillStyle = "cyan"
+				}
+			};
+
+			
+			canvas = document.getElementById('surface');
+			context = canvas.getContext('2d');
+			context.fillStyle = "red"
+	
+			var image2 = new Image();
+			image2.src = filename[0];
+			image2.onload = function(e)
+			{
+				context.drawImage(image2, 0, 0);
+				drawText ("SIGGRAPH");
+			};
+
+			canvas.ontouchstart = function (e)
+			{ 
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					context.beginPath();
+					context.arc(canvasPoint.x, canvasPoint.y, brushRadius, 0, 2*Math.PI);
+					context.fill();
+				}
+			}
+
+			canvas.ontouchmove = function (e)
+			{ 
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					context.beginPath();
+					context.arc(canvasPoint.x, canvasPoint.y, brushRadius, 0, 2*Math.PI);
+					context.fill();
+				}
+			}
+		}
+	</script>
+</head>
+
+<body onload="createCanvas();">
+	<div id="buttonDiv">
+		<select onchange="changeImage();" id="imgSelector">
+			<option value="sun">Sun - Local</option>
+			<option value="jupiter">Jupiter - Internet</option>
+		</select>
+		<input onchange="changeScale();" type="checkbox" id="scale">Scale Image</input>
+	</div>
+
+	<div id="brushCanvasDiv">
+	</div>
+	<div id="colorCanvasDiv">
+	</div>
+	<div id="canvasDiv">
+	</div>
+</body>
+</html>

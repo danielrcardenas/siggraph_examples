@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<title></title> 
+		
+		<link rel="stylesheet" href="styles.css" /> 
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css" /> 
+
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		
+        <script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
+
+		<script>
+			yqlUrl = "http://query.yahooapis.com/v1/public/yql";  // location of YQL
+			window.onload = getJobs();  // call getJobs() when window opens
+
+			function getJobs()
+			{
+				// create the query for YQL
+				var newsquery = "select%20*%20from%0Arss%20where%20url%3D%22http%3A%2F%2Flosangeles.craigslist.org%2Ftfr%2Findex.rss%22";
+				var newsqueryUrl = yqlUrl + "?q=" + newsquery + "&format=json";
+
+				// Ajax call to get the RSS feed
+				$.getJSON(newsqueryUrl, function (yqlObject)
+				{
+					if (yqlObject.query.count > 0)
+					{
+						for (var jobCount = 0; jobCount < 15; jobCount++)
+						{
+							var paragraphID = "#headline" + jobCount;
+							var paragraph = document.getElementById(paragraphID);
+
+							$(paragraphID).text(yqlObject.query.results.item[jobCount].title[0]);
+							
+							// put the job title and description into local storage for later retrieval
+							var thisTitle = "title" + jobCount;
+							localStorage.setItem(thisTitle, yqlObject.query.results.item[jobCount].title[0]);
+
+							var thisDesc = "desc" + jobCount;
+							localStorage.setItem(thisDesc, yqlObject.query.results.item[jobCount].description);
+						}
+					}
+				}
+				);
+			}
+			
+		function processJobClick(whichJob)
+		{
+			var thisTitle = "title" + whichJob;
+			var titleText = localStorage.getItem(thisTitle);
+
+			var thisDesc = "desc" + whichJob;
+			var descText = localStorage.getItem(thisDesc);
+
+			$("#jobtitle").text(titleText);
+			$("#jobdesc").text(descText);
+		}
+
+
+		</script>
+	</head>
+	<body>
+	        <div data-role="page" id="menu">			
+
+		<img src="acmSiggraph_logo300.jpg" class="center" />
+				    <div data-role="header" data-theme="b"> 
+                <h1>Job Listings</h1> 
+            </div>
+            <div data-role="content">
+
+		            <ul data-role="listview" data-theme="c"> 
+
+<li>		<a style="white-space:normal;" id="headline0" onclick="processJobClick(0);" href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline1" onclick="processJobClick(1);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline2" onclick="processJobClick(2);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline3" onclick="processJobClick(3);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline4" onclick="processJobClick(4);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline5" onclick="processJobClick(5);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline6" onclick="processJobClick(6);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline7" onclick="processJobClick(7);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline8" onclick="processJobClick(8);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline9" onclick="processJobClick(9);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline10" onclick="processJobClick(10);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline11" onclick="processJobClick(11);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline12" onclick="processJobClick(12);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline13" onclick="processJobClick(13);"href="#jobinfo"></a> </li>
+<li>		<a style="white-space:normal;" id="headline14" onclick="processJobClick(14);"href="#jobinfo"></a> </li>
+		</ul>
+		</div>
+		</div>
+		
+		<div data-role="page" id="jobinfo">
+		<img src="acmSiggraph_logo300.jpg" class="center" />
+		    <div data-role="header" data-theme="b"> 
+                <h1>Job Info</h1>
+            </div>
+
+            <div data-role="content">   
+			<ul data-role="listview" data-theme="c"> 
+                <p style="white-space:normal; margin: 0px 10px; font-weight:bold;" id="jobtitle"></p> 
+				<br />
+                <p style="white-space:normal; margin: 0px 10px;" id="jobdesc"></p> 
+			</ul>
+
+			</div> 
+		</div>
+	</body>
+</html>	

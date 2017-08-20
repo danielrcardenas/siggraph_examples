@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<title>VC News</title> 
+		
+		<link rel="stylesheet" href="styles.css" /> 
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
+
+	</head>
+	<body>
+		<img src="acmSiggraph_logo300.jpg" class="left" />
+		<br />
+		<p class="center">
+		Hello SIGGRAPH!
+		</p>
+	</body>
+</html>	

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+
+	<script>
+		var canvas;
+		var context;
+		var colors = ["red",
+			"green",
+			"blue",
+			"yellow",
+			"azure",
+			"coral",
+			"crimson",
+			"chartreuse",
+			"khaki",
+			"lavendar",
+			"AliceBlue",
+			"AntiqueWhite",
+			"Aqua",
+			"Aquamarine",
+			"Beige",
+			"Bisque",
+			"Black",
+			"BlanchedAlmond",
+			"Blue",
+			"BlueViolet",
+			"Brown",
+			"BurlyWood",
+			"CadetBlue",
+			"Chocolate",
+			"CornflowerBlue",
+			"Cornsilk",
+			"Cyan",
+			"DarkBlue",
+			"DarkCyan",
+			"DarkGoldenRod",
+			"DarkGray",
+			"DarkGreen"];
+
+		function eraseCanvas ()
+		{
+			context.clearRect (0, 0, canvas.width, canvas.height);
+		}
+		
+		// convert window coordinate to canvas coordinates
+		function windowToCanvas (canvas, x, y)
+		{
+			var boundingBox = canvas.getBoundingClientRect();
+			return { x: (x - boundingBox.left) * (canvas.width  / boundingBox.width),
+				y: (y - boundingBox.top)  * (canvas.height / boundingBox.height)
+			};
+		}
+		
+		function createCanvas ()
+		{
+			var canvasDiv = document.getElementById("canvasDiv");
+			canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" +
+				(window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 50) + "\' />";
+			
+			canvas = document.getElementById('surface');
+			context = canvas.getContext('2d');
+	
+			canvas.ontouchstart = function (e)
+			{ 
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					var index = Math.random() * colors.length;
+					context.fillStyle=colors[Math.floor(index)];
+				}
+			}
+
+			canvas.ontouchmove = function (e)
+			{ 
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					context.beginPath();
+					context.arc(canvasPoint.x, canvasPoint.y, 20, 0, 2*Math.PI);
+					context.fill();
+				}
+			}
+
+		}
+	</script>
+</head>
+
+<body onload="createCanvas();">
+	<div id="buttonDiv">
+		<button type="button" onclick="eraseCanvas();">Erase Canvas</button>
+	</div>
+
+	<div id="canvasDiv">
+	</div>
+</body>
+</html>

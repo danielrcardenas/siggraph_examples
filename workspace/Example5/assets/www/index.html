@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contact Example</title>
+
+	<link rel="stylesheet" href="styles.css" /> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css" /> 
+
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+	<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+    // Wait for PhoneGap to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // PhoneGap is ready
+    //
+    function onDeviceReady()
+	{
+        var options = new ContactFindOptions();
+        options.multiple=true; 
+        var fields = ["name"];
+        navigator.contacts.find(fields, onSuccess, onError, options);
+    }
+
+    // onSuccess: Get a snapshot of the current contacts
+    //
+    function onSuccess(contacts)
+	{
+        for (var i=0; i<contacts.length && i<15; i++)
+		{
+			var contactSlot = "#contact" + i;
+			$(contactSlot).text(contacts[i].displayName);
+        }
+
+    }
+
+    // onError: Failed to get the contacts
+    //
+    function onError(contactError) {
+        alert('onError!');
+    }
+    </script>
+</head>
+<body>
+	<div data-role="page" id="menu">			
+
+	<img src="acmSiggraph_logo300.jpg" class="center" />
+		<div data-role="header" data-theme="b"> 
+			<h1>Contacts</h1> 
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" data-theme="c"> 
+				<li> <a style="white-space:normal;" id="contact0"></a> </li>
+				<li> <a style="white-space:normal;" id="contact1"></a> </li>
+				<li> <a style="white-space:normal;" id="contact2"></a> </li>
+				<li> <a style="white-space:normal;" id="contact3"></a> </li>
+				<li> <a style="white-space:normal;" id="contact4"></a> </li>
+				<li> <a style="white-space:normal;" id="contact5"></a> </li>
+				<li> <a style="white-space:normal;" id="contact6"></a> </li>
+				<li> <a style="white-space:normal;" id="contact7"></a> </li>
+				<li> <a style="white-space:normal;" id="contact8"></a> </li>
+				<li> <a style="white-space:normal;" id="contact9"></a> </li>
+				<li> <a style="white-space:normal;" id="contact10"></a> </li>
+				<li> <a style="white-space:normal;" id="contact11"></a> </li>
+				<li> <a style="white-space:normal;" id="contact12"></a> </li>
+				<li> <a style="white-space:normal;" id="contact13"></a> </li>
+				<li> <a style="white-space:normal;" id="contact14"></a> </li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

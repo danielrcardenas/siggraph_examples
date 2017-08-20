@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="styles.css" /> 
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+	
+    <script type="text/javascript">
+	// Wait for PhoneGap to load
+    document.addEventListener("deviceready", init, false);
+
+	function onBatteryCritical(info)
+	{
+		// Handle the volume down button
+		alert ("Battery Critical!");
+	}
+
+	function onBatteryChange(info)
+	{
+		// Handle the volume down button
+		alert ("Power Level:" + info.level);
+	}
+
+	function onBatteryLow(info)
+	{
+		// Handle the volume down button
+		alert ("Battery Low!");
+	}
+	
+	function init()
+	{
+		window.addEventListener("batterycritical", onBatteryCritical, false);
+		window.addEventListener("batterystatus", onBatteryChange, false);
+		window.addEventListener("batterylow", onBatteryLow, false);
+		alert ("init");
+	}
+	</script>
+</head>
+<body>
+	<div>
+	Power Response
+	</div>
+</body>
+</html>

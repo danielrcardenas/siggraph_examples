@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+
+	<script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+	<script>
+		var canvas, context;
+		var colors = ["red",
+			"green",
+			"blue",
+			"yellow",
+			"azure",
+			"coral",
+			"crimson",
+			"chartreuse",
+			"khaki",
+			"lavendar",
+			"AliceBlue",
+			"AntiqueWhite",
+			"Aqua",
+			"Aquamarine",
+			"Beige",
+			"Bisque",
+			"Black",
+			"BlanchedAlmond",
+			"Blue",
+			"BlueViolet",
+			"Brown",
+			"BurlyWood",
+			"CadetBlue",
+			"Chocolate",
+			"CornflowerBlue",
+			"Cornsilk",
+			"Cyan",
+			"DarkBlue",
+			"DarkCyan",
+			"DarkGoldenRod",
+			"DarkGray",
+			"DarkGreen"];
+		var filename = ["PIA03149-800x600.jpg", "http://www.jpl.nasa.gov/spaceimages/images/wallpaper/PIA00018-800x600.jpg"];
+		var whichFilename = 0; // default to sun image
+
+		function drawText (textToDraw)
+		{
+			// see what happens when the // characters are removed
+			context.save();
+			context.fillStyle = 'rgba(90,240,120,0.5);';
+			context.shadowColor = 'rgba(50, 50, 50, 1.0)';
+			context.shadowOffsetX = 6;
+			context.shadowOffsetY = -6;
+			context.shadowBlur = 9;
+
+			context.font = '64px Arial';
+			var textMetrics = context.measureText(textToDraw);
+			context.fillText(textToDraw, canvas.width/2-textMetrics.width/2, canvas.height/2);
+			context.restore();
+		}
+		
+		function changeImage ()
+		{
+			image = new Image();
+			switch ($("#imgSelector").val())
+			{
+				case 'sun':
+					whichFilename = 0;
+					break;
+				case 'jupiter':
+					whichFilename = 1;
+					break;
+			}
+			image.src = filename[whichFilename];
+			image.onload = function(e) {
+				if ($("#scale").is(":checked"))
+					context.drawImage(image, 0, 0, canvas.width, canvas.height);
+				else
+					context.drawImage(image, 0, 0);
+				drawText ("SIGGRAPH");
+			};
+		}
+		
+		function changeScale ()
+		{
+			context.clearRect (0, 0, canvas.width, canvas.height);
+			image = new Image();
+			image.src = filename[whichFilename];
+			image.onload = function(e) {
+				if ($("#scale").is(":checked"))
+					context.drawImage(image, 0, 0, canvas.width, canvas.height);
+				else
+					context.drawImage(image, 0, 0);
+				drawText ("SIGGRAPH");
+			};			
+		}
+
+		// convert window coordinate to canvas coordinates
+		function windowToCanvas (canvas, x, y)
+		{
+			var boundingBox = canvas.getBoundingClientRect();
+			return { x: (x - boundingBox.left) * (canvas.width  / boundingBox.width),
+				y: (y - boundingBox.top)  * (canvas.height / boundingBox.height)
+			};
+		}
+		
+		function createCanvas ()
+		{
+			var canvasDiv = document.getElementById("canvasDiv");
+			canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" +
+				(window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 50) + "\' />";
+			
+			canvas = document.getElementById('surface');
+			context = canvas.getContext('2d');
+	
+			image = new Image();
+			image.src = filename[0];
+			image.onload = function(e) {
+				context.drawImage(image, 0, 0);
+				drawText ("SIGGRAPH");
+			};
+
+			canvas.ontouchstart = function (e)
+			{ 
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					var index = Math.random() * colors.length;
+					context.fillStyle=colors[Math.floor(index)];
+				}
+			}
+
+			canvas.ontouchmove = function (e)
+			{ 
+				if (e.touches.length === 1)
+				{
+					e.preventDefault();
+					var canvasPoint = windowToCanvas (canvas, e.touches[0].clientX, e.touches[0].clientY);
+					
+					context.beginPath();
+					context.arc(canvasPoint.x, canvasPoint.y, 20, 0, 2*Math.PI);
+					context.fill();
+				}
+			}
+
+		}
+	</script>
+</head>
+
+<body onload="createCanvas();">
+	<div id="buttonDiv">
+		<select onchange="changeImage();" id="imgSelector">
+			<option value="sun">Sun - Local</option>
+			<option value="jupiter">Jupiter - Internet</option>
+		</select>
+		<input onchange="changeScale();" type="checkbox" id="scale">Scale Image</input>
+	</div>
+
+	<div id="canvasDiv">
+	</div>
+</body>
+</html>

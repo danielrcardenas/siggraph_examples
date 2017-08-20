@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+</head>
+
+<body>
+	<canvas id='surface' width='260' height='200'>
+	</canvas>
+
+	<script>
+		var canvas = document.getElementById('surface');
+		var context = canvas.getContext('2d');
+   
+		context.font = '24pt Arial';
+		context.fillStyle = 'green';
+		context.strokeStyle = 'red';
+
+		context.fillText("Hello SIGGRAPH", canvas.width/2 - 120,
+			canvas.height/2 + 15);
+		context.strokeText("Hello SIGGRAPH", canvas.width/2 - 120,
+			canvas.height/2 + 15 );
+	</script>
+</body>
+</html>

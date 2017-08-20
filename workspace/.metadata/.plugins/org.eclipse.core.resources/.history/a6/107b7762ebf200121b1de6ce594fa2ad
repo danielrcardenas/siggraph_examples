@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas Example</title>
+
+	<link rel="stylesheet" href="styles.css" />
+	<meta name="viewport" content="width=device-width" />
+
+	<script>
+		function createCanvas ()
+		{
+			var canvasDiv = document.getElementById("canvasDiv");
+			canvasDiv.innerHTML = "<canvas id=\'surface\' width=\'" + (window.innerWidth - 10) + "\' height=\'" + (window.innerHeight - 10) + "\' />";
+			
+			var canvas = document.getElementById('surface');
+			var context = canvas.getContext('2d');
+
+			// empty square
+			context.strokeStyle = 'blue';
+			context.beginPath();
+			context.moveTo(10,10);
+			context.lineTo(10,100);
+			context.lineTo(100,100);
+			context.lineTo(100,10);
+			context.lineTo(10,10);
+			context.stroke();
+
+			// filled square
+			context.fillStyle = '#ee11dd';
+			context.beginPath();
+			context.moveTo(110,10);
+			context.lineTo(110,100);
+			context.lineTo(200,100);
+			context.lineTo(200,10);
+			context.lineTo(110,10);
+			context.fill();
+			
+			// filled circle with gradient
+			var gradient=context.createLinearGradient(0,0,110,0);
+			gradient.addColorStop("0","magenta");
+			gradient.addColorStop("0.5","blue");
+			gradient.addColorStop("1.0","red");
+
+//			Uncomment the code below and comment out the gradient and fill code below it
+//          You will see an image used as a pattern
+/*			var img = new Image();
+			var pattern;
+			img.src = 'clouds.jpg';
+			img.onload = function (e) {
+				pattern = context.createPattern(img, 'repeat'); 
+				context.fillStyle=pattern;
+				context.beginPath();
+				context.arc(55,155,40,0,2*Math.PI);
+				context.fill();
+			};
+*/
+			context.fillStyle=gradient;
+			context.beginPath();
+			context.arc(55,155,40,0,2*Math.PI);
+			context.fill();
+
+			// stroked bezier
+			context.strokeStyle = '#22ee33';
+			context.lineWidth = 5;
+			context.beginPath();
+			context.moveTo(110,110);
+			context.bezierCurveTo(110, 210, 210, 110, 210, 210);
+			context.stroke();
+		}
+	</script>
+</head>
+
+<body onload="createCanvas();">
+<div id="canvasDiv">
+</div>
+
+</body>
+</html>

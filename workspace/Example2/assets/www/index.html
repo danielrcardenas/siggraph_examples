@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<title></title> 
+		
+		<link rel="stylesheet" href="styles.css" /> 
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		
+        <script type="text/javascript" src="jquery-1.6.1.min.js"></script> 
+
+		<script>
+			yqlUrl = "http://query.yahooapis.com/v1/public/yql";  // location of YQL
+			window.onload = getNews;  // call getNews() when window opens
+
+			function getNews()
+			{
+				// select * from rss where url=%22http://news.google.com/news?pz=1&cf=all?ned=us?hl=en?output=rss%22";
+				var newsquery = "select%20*%20from%0Arss%20where%20url%3D%22http%3A%2F%2Fnews.google.com%2Fnews%3Fpz%3D1%26cf%3Dall%26ned%3Dus%26hl%3Den%26output%3Drss%22";
+				var newsqueryUrl = yqlUrl + "?q=" + newsquery + "&format=json";
+
+				$.getJSON(newsqueryUrl, function (yqlObject)
+				{
+					if (yqlObject.query.count > 0)
+					{
+						for (var headlineCount = 0; headlineCount < 5; headlineCount++)
+						{
+							var paragraphID = "#headline" + headlineCount;
+							var paragraph = document.getElementById(paragraphID);
+
+							$(paragraphID).text(yqlObject.query.results.item[headlineCount].title);	
+
+						}
+					}
+				}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<img src="acmSiggraph_logo300.jpg" class="center" />
+		<br />
+		<p id="headline0"></p>
+		<br />
+		<p id="headline1"></p>
+		<br />
+		<p id="headline2"></p>
+		<br />
+		<p id="headline3"></p>
+		<br />
+		<p id="headline4"></p>
+	</body>
+</html>	

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<title></title> 
+		
+		<link rel="stylesheet" href="styles.css" /> 
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+		
+        <script type="text/javascript" src="jquery-1.6.1.min.js"></script> 
+
+		<script>
+			yqlUrl = "http://query.yahooapis.com/v1/public/yql";  // location of YQL
+			window.onload = getNews();  // call getNews() when window opens
+
+			function getNews()
+			{
+				
+				var newsterm = $("#newsterm").val();
+				
+				// if there is no input string, jQuery will return undefined, so need to check for that
+				if (typeof newsterm != 'undefined')
+				{
+					// select * from rss where url=%22http://news.google.com/news?pz=1&cf=all?ned=us?hl=en??output=rss%22";
+					var newsquery = "select%20*%20from%0Arss%20where%20url%3D%22http%3A%2F%2Fnews.google.com%2Fnews%3Fpz%3D1%26cf%3Dall%26ned%3Dus%26hl%3Den%26q%3D"
+				+ newsterm + "%26output%3Drss%22";
+				}
+				else
+				{
+					var newsquery = "select%20*%20from%0Arss%20where%20url%3D%22http%3A%2F%2Fnews.google.com%2Fnews%3Fpz%3D1%26cf%3Dall%26ned%3Dus%26hl%3Den%26output%3Drss%22";
+				}
+				var newsqueryUrl = yqlUrl + "?q=" + newsquery + "&format=json";
+
+				$.getJSON(newsqueryUrl, function (yqlObject)
+				{
+					if (yqlObject.query.count > 0)
+					{
+						for (var headlineCount = 0; headlineCount < 5; headlineCount++)
+						{
+							var paragraphID = "#headline" + headlineCount;
+							var paragraph = document.getElementById(paragraphID);
+
+							$(paragraphID).text(yqlObject.query.results.item[headlineCount].title);	
+
+						}
+					}
+				}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<img src="acmSiggraph_logo300.jpg" class="center" />
+			<table style="width:100%">
+			<tr style="padding:0px">
+				<td style="width:80%; vertical-align:top; padding:0px; margin:0px; font-size:12px;">
+				Enter term for news query:
+				</td>
+				<td style="width:20%; vertical-align:top; padding:0px; margin:0px;">
+				</td>
+			</tr>
+			<tr style="padding:0px">
+				<td style="width:80%; vertical-align:middle; padding:0px">
+					<input autocomplete="off" style="width:90%" id="newsterm" type="text"></input>
+				</td>
+				<td style="width:20%; vertical-align:middle; padding:0px">
+					<button onclick="getNews();" value="Submit">Submit</button>
+				</td>
+			</tr>
+			</table>
+		<br />
+		<p id="headline0"></p>
+		<br />
+		<p id="headline1"></p>
+		<br />
+		<p id="headline2"></p>
+		<br />
+		<p id="headline3"></p>
+		<br />
+		<p id="headline4"></p>
+	</body>
+</html>	
